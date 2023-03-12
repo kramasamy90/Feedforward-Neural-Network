@@ -6,22 +6,30 @@ class ann:
     This class ann starts with input layer and is built layer-by-layer.
     '''
     def __init__(self, input_layer_width):
+
         self.input_layer_width = input_layer_width
+
+        # Intialize
         self.top_layer_width = input_layer_width # Top layer need not be the output layer. 
         self.n_hidden_layers = 0
         self.contains_output_layer = False # Used later to ensure hidden layers are not added on top of output layer.
         self.Ws = []
         self.bs = []
 
+        # Set default loss and activation functions
+        self.activation_function = functions.logistic
+        self.output_activation_function = functions.softmax
+        self.loss = 'cross_entropy'
+
     def add_hidden_layer(self, width):
         if self.contains_output_layer:
             print("ERROR: Cannot add hidden layer on top of output layer!")
             return
 
-        W = np.zeros(self.top_layer_width * width).reshape(self.top_layer_width, width)
+        W = np.zeros(self.top_layer_width * width).reshape(width, self.top_layer_width)
         self.Ws.append(W)
 
-        b = np.zeros(width).reshape(width, 1)
+        b = np.zeros(width)
         self.bs.append(b)
 
         self.n_hidden_layers += 1
@@ -42,14 +50,43 @@ class ann:
         self.contains_output_layer = True
         self.top_layer_width = output_layer_width
     
-    def f_prop(self, x):
+    def forward_prop(self, x):
+        self.x = x
+        self.h = []
+        self.a = []
         h = x
         for i in range(self.n_hidden_layers):
             a = self.Ws[i] @ h + self.bs[i]
-            # h = self.(a)
+            h = self.activation_function(a)
+            self.a.append(a)
+            self.h.append(h)
         al = self.Ws[self.n_hidden_layers] @ h + self.bs[self.n_hidden_layers]
-        y = functions.softmax(al)
+        y = self.output_activation_function(al)
+        self.al = al
+        self.y = y
         return y
+
+    def back_prop(self, y_actual):
+        self.grad_W = []
+        self.grad_b = []
+        if(self.loss == 'cross_entropy'):
+            l = np.where(self.y == 1)
+            I_l = np.zeros(len(self.y))
+            I_l[l] = 1
+            grad_a = I_l - self.y
+        
+        L = self.n_hidden_layers # Total number of layers - 1, indexing starts from 0.
+        for k in range(L, 0, -1):
+            grad_W = grad_a @ self.h[k-1].T
+            grad_b = grad_a
+            grad_h = self.Ws[k].T @ grad_a
+            grad_a = grad_h * functions.d_logistic(self.a[k-1])
+            self.grad_W.append(grad_W)
+            self.grad_b.append(grad_b)
+        
+        grad_W = grad_a @ self.x.T
+        self.grad_W.append(grad_W)
+        self.grad_b.append(grad_a) # grad_b = grad_a
 
 
 
@@ -57,6 +94,7 @@ if (__name__ == '__main__'):
     nn = ann(3)
     nn.add_n_hidden_layers(3, 2)
     nn.add_output_layer(2)
-    print(nn.Ws)
-    print(nn.n_hidden_layers)
-    print(len(nn.Ws))
+    x = np.array([1, 2, 3])
+    y = np.array([0, 1])
+    nn.forward_prop(x)
+    nn.back_prop(y)
