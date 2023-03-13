@@ -18,6 +18,7 @@ class ann:
 
         # Set default loss and activation functions
         self.activation_function = functions.logistic
+        self.d_activation_function = functions.d_logistic
         self.output_activation_function = functions.softmax
         self.loss = 'cross_entropy'
 
@@ -46,9 +47,10 @@ class ann:
 
     def add_output_layer(self, output_layer_width):
         self.add_hidden_layer(output_layer_width)
-        self.n_hidden_layers -= 1 # Because the above line uses 'add_hidden_layer' function to add output layer.
+        self.n_hidden_layers -= 1 
+        # Because the above line uses 'add_hidden_layer' function to add output layer.
+        # And 'add_hidden_layer' function increases self.n_hidden_layers.
         self.contains_output_layer = True
-        self.top_layer_width = output_layer_width
     
     def forward_prop(self, x):
         self.x = x
@@ -80,7 +82,7 @@ class ann:
             grad_W = grad_a @ self.h[k-1].T
             grad_b = grad_a
             grad_h = self.Ws[k].T @ grad_a
-            grad_a = grad_h * functions.d_logistic(self.a[k-1])
+            grad_a = grad_h * self.d_activation_function(self.a[k-1])
             self.grad_W.append(grad_W)
             self.grad_b.append(grad_b)
         
