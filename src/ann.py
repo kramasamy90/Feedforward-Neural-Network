@@ -72,7 +72,7 @@ class ann:
         self.grad_W = []
         self.grad_b = []
         if(self.loss == 'cross_entropy'):
-            l = np.where(self.y == 1)
+            l = y_actual
             I_l = np.zeros(len(self.y))
             I_l[l] = 1
             grad_a = I_l - self.y
