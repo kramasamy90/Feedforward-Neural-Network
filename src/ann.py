@@ -30,7 +30,7 @@ class ann:
         W = np.zeros(self.top_layer_width * width).reshape(width, self.top_layer_width)
         self.Ws.append(W)
 
-        b = np.zeros(width)
+        b = np.zeros(width).reshape(width, 1)
         self.bs.append(b)
 
         self.n_hidden_layers += 1
@@ -53,15 +53,15 @@ class ann:
         self.contains_output_layer = True
     
     def forward_prop(self, x):
-        self.x = x
+        self.x = x.reshape(len(x), 1)
         self.h = []
         self.a = []
-        h = x
+        h = self.x
         for i in range(self.n_hidden_layers):
             a = self.Ws[i] @ h + self.bs[i]
             h = self.activation_function(a)
-            self.a.append(a)
-            self.h.append(h)
+            self.a.append(a.reshape(len(a), 1))
+            self.h.append(h.reshape(len(h), 1))
         al = self.Ws[self.n_hidden_layers] @ h + self.bs[self.n_hidden_layers]
         y = self.output_activation_function(al)
         self.al = al
@@ -73,9 +73,10 @@ class ann:
         self.grad_b = []
         if(self.loss == 'cross_entropy'):
             l = y_actual
-            I_l = np.zeros(len(self.y))
-            I_l[l] = 1
+            I_l = np.zeros(len(self.y)).reshape(len(self.y), 1)
+            I_l[l][0] = 1
             grad_a = I_l - self.y
+            grad_a = grad_a.reshape(len(grad_a), 1)
         
         L = self.n_hidden_layers # Total number of layers - 1, indexing starts from 0.
         for k in range(L, 0, -1):
@@ -89,8 +90,6 @@ class ann:
         grad_W = grad_a @ self.x.T
         self.grad_W.append(grad_W)
         self.grad_b.append(grad_a) # grad_b = grad_a
-
-
 
 if (__name__ == '__main__'):
     nn = ann(3)
