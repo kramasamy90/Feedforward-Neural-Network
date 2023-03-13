@@ -1,5 +1,8 @@
 import numpy as np
 
+#%%
+# Activation functions and their derivatives.
+
 def softmax(x): # x is a numpy array.
     max_val = np.max(x)
     x_exp = np.exp(x - max_val)
@@ -17,9 +20,6 @@ def d_softmax(x, l): # Derivative of softmax
     y = softmax(x)
     return (_1 * y[l] - y[l] * y)
 
-#%%
-
-# Activation functions and their derivatives.
 
 def logistic(x):
     return 1/(1+np.exp(-1 * x))
