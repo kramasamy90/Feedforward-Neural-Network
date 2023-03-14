@@ -2,9 +2,17 @@ import numpy as np
 import functions
 
 class ann:
+
     '''
     This class ann starts with input layer and is built layer-by-layer.
+    * 'add_hidden_layer' adds one layer on top of the existing one.
+    * 'add_n_hidden_layer' adds n layers by calling 'add_hidden_layer' function.
+    * 'add_output_layer' add the output layer using 'add_hidden_layer' function.
+    * 'add_output_layer' does some book-keeping after calling 'add_hidden_layer' function,
+      to ensure the self.n_hidden_layers does not increase after adding the output layer.
+    * 'forward_prop' and 'back_prop' does what their name indicates.
     '''
+
     def __init__(self, input_layer_width):
 
         self.input_layer_width = input_layer_width
