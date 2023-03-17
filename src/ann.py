@@ -60,7 +60,8 @@ class ann:
         # And 'add_hidden_layer' function increases self.n_hidden_layers.
         self.contains_output_layer = True
     
-    def forward_prop(self, x):
+    def forward_prop(self, X):
+        x = X.flatten()
         self.x = x.reshape(len(x), 1)
         self.h = []
         self.a = []
@@ -98,6 +99,13 @@ class ann:
         grad_W = grad_a @ self.x.T
         self.grad_Ws.append(grad_W)
         self.grad_bs.append(grad_a) # grad_b = grad_a
+
+        self.grad_Ws.reverse()
+        self.grad_bs.reverse()
+    
+    def predict(self, X):
+        return np.argmax(self.forward_prop(X))
+
 
 if (__name__ == '__main__'):
     nn = ann(3)
