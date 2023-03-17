@@ -1,5 +1,5 @@
 import numpy as np
-import functions
+import ann_utils
 
 class ann:
 
@@ -25,9 +25,9 @@ class ann:
         self.bs = []
 
         # Set default loss and activation functions
-        self.activation_function = functions.logistic
-        self.d_activation_function = functions.d_logistic
-        self.output_activation_function = functions.softmax
+        self.activation_function = ann_utils.logistic
+        self.d_activation_function = ann_utils.d_logistic
+        self.output_activation_function = ann_utils.softmax
         self.loss = 'cross_entropy'
 
     def add_hidden_layer(self, width):
