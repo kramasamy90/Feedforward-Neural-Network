@@ -77,8 +77,8 @@ class ann:
         return y
 
     def back_prop(self, y_actual):
-        self.grad_W = []
-        self.grad_b = []
+        self.grad_Ws = []
+        self.grad_bs = []
         if(self.loss == 'cross_entropy'):
             l = y_actual
             I_l = np.zeros(len(self.y)).reshape(len(self.y), 1)
@@ -92,12 +92,12 @@ class ann:
             grad_b = grad_a
             grad_h = self.Ws[k].T @ grad_a
             grad_a = grad_h * self.d_activation_function(self.a[k-1])
-            self.grad_W.append(grad_W)
-            self.grad_b.append(grad_b)
+            self.grad_Ws.append(grad_W)
+            self.grad_bs.append(grad_b)
         
         grad_W = grad_a @ self.x.T
-        self.grad_W.append(grad_W)
-        self.grad_b.append(grad_a) # grad_b = grad_a
+        self.grad_Ws.append(grad_W)
+        self.grad_bs.append(grad_a) # grad_b = grad_a
 
 if (__name__ == '__main__'):
     nn = ann(3)
