@@ -40,13 +40,11 @@ class ann:
         self.top_layer_width = self.input_layer_width
         self.Ws = []
         self.bs = []
-        print('init')
         self.add_n_hidden_layers()
 
 
     def add_hidden_layer(self, width):
         W = ann.weight_init(width, self.top_layer_width)
-        print(W.shape)
         self.Ws.append(W)
 
         b = ann.weight_init(width, 1)
@@ -61,7 +59,6 @@ class ann:
         self.contains_output_layer = True
 
     def add_n_hidden_layers(self):
-        print('n')
         for i in range(self.num_layers):
             self.add_hidden_layer(ann.hidden_size)
         self.add_output_layer()
