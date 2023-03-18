@@ -22,6 +22,7 @@ def d_softmax(x, l): # Derivative of softmax
 
 
 def logistic(x):
+    x[x < -100] = -100
     return 1/(1+np.exp(-1 * x))
     pass
 
@@ -56,4 +57,30 @@ def d_relu(x): # derivative of relu
     return v_d_relu(x)
 
 #%%
+# Weight initialization.
 
+def zero_init(n_rows, n_cols):
+    return np.zeros([n_rows, n_cols])
+
+
+def random_init(n_rows, n_cols, scale = 0.01):
+    return scale * np.random.randn(n_rows, n_cols)
+
+#%%
+# Functions to troubleshoot 
+
+def get_norms_params(nn):
+    norm = 0
+    for W in nn.Ws:
+        norm += np.linalg.norm(W) ** 2
+    for b in nn.bs:
+        norm += np.linalg.norm(b) ** 2
+    return norm ** (0.5)
+
+def get_norms_grads(nn):
+    norm = 0
+    for W in nn.grad_Ws:
+        norm += np.linalg.norm(W) ** 2
+    for b in nn.grad_bs:
+        norm += np.linalg.norm(b) ** 2
+    return norm ** (0.5)
