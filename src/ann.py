@@ -19,7 +19,6 @@ class ann:
     beta = 0.5
     beta1 = 0.5
     beta2 = 0.5
-    epsilon = 0.000001
     weight_decay = 0.0
     loss = 'cross_entropy'
 
