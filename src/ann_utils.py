@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+# from ann import ann
 
 #%%
 # Activation functions and their derivatives.
@@ -24,7 +26,6 @@ def d_softmax(x, l): # Derivative of softmax
 def sigmoid(x):
     x[x < -100] = -100
     return 1/(1+np.exp(-1 * x))
-    pass
 
 def d_sigmoid(x): # derivative of sigmoid
     y = sigmoid(x)
@@ -87,3 +88,11 @@ def get_norms_grads(nn):
     for b in nn.grad_bs:
         norm += np.linalg.norm(b) ** 2
     return norm ** (0.5)
+
+#%% Plots
+
+def view_weights_distribution(nn, num_layers):
+    fig, ax = plt.subplots(2, num_layers + 1)
+    for i in range(num_layers + 1):
+        ax[0][i].hist(nn.Ws[i].flatten(), range=(-3, 3))
+        ax[1][i].hist(nn.bs[i].flatten(), range=(-3, 3))
