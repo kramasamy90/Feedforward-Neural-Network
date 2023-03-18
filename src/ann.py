@@ -12,67 +12,59 @@ class ann:
       to ensure the self.n_hidden_layers does not increase after adding the output layer.
     * 'forward_prop' and 'back_prop' does what their name indicates.
     '''
+    # Input parameters.
+    batch_size = 4
+    learning_rate = 0.1
+    momentum = 0.5
+    beta = 0.5
+    beta1 = 0.5
+    beta2 = 0.5
+    epsilon = 0.000001
+    weight_decay = 0.0
+    loss = 'cross_entropy'
 
-    def __init__(self, input_layer_width):
+    # Functions
+    weight_init = ann_utils.random_init
+    activation = ann_utils.sigmoid
+    d_activation = ann_utils.d_sigmoid
+    output_activation = ann_utils.softmax
+    d_output_activation = ann_utils.d_softmax
 
+    # ANN structure
+    num_layers = 5
+    hidden_size = 4
+
+    def __init__(self, input_layer_width, output_layer_width):
         self.input_layer_width = input_layer_width
-
-        # Input parameters.
-        self.batch_size = 4
-        self.learning_rate = 0.1
-        self.momentum = 0.5
-        self.beta = 0.5
-        self.beta1 = 0.5
-        self.beta2 = 0.5
-        self.epsilon = 0.000001
-        self.weight_decay = 0.0
-        self.weight_init = ann_utils.random_init
-        self.n_hidden_layers = 0
-        self.hidden_size = 4
-        self.activation_function = ann_utils.logistic
-        self.d_activation_function = ann_utils.d_logistic
-        self.init = ann_utils.random_init
-        # self.init = ann_utils.zero_init
-
-        # Other instance values.
-        self.top_layer_width = input_layer_width # Top layer need not be the output layer. 
-        self.contains_output_layer = False # Used later to ensure hidden layers are not added on top of output layer.
+        self.output_layer_width = output_layer_width
+        self.top_layer_width = self.input_layer_width
         self.Ws = []
         self.bs = []
+        print('init')
+        self.add_n_hidden_layers()
 
-        # Set default loss and activation functions
-        self.output_activation_function = ann_utils.softmax
-        self.loss = 'cross_entropy'
 
     def add_hidden_layer(self, width):
-        if self.contains_output_layer:
-            print("ERROR: Cannot add hidden layer on top of output layer!")
-            return
-
-        W = self.init(width, self.top_layer_width)
+        W = ann.weight_init(width, self.top_layer_width)
+        print(W.shape)
         self.Ws.append(W)
 
-        b = self.init(width, 1)
+        b = ann.weight_init(width, 1)
         self.bs.append(b)
 
-        self.n_hidden_layers += 1
         self.top_layer_width = width
     
-    def add_n_hidden_layers(self, n_hidden_layers, hidden_layer_width):
-        '''
-        Adds a block of hidden layers on top of the existing top layer, which could just be the input layer.
-        The block has a depth of n_hidden_layers and width of hidden_layer_width
-        '''
-        self.hidden_layer_width = hidden_layer_width
-        for i in range(n_hidden_layers):
-            self.add_hidden_layer(hidden_layer_width)
-
-    def add_output_layer(self, output_layer_width):
-        self.add_hidden_layer(output_layer_width)
-        self.n_hidden_layers -= 1 
+    def add_output_layer(self):
+        self.add_hidden_layer(self.output_layer_width)
         # Because the above line uses 'add_hidden_layer' function to add output layer.
         # And 'add_hidden_layer' function increases self.n_hidden_layers.
         self.contains_output_layer = True
+
+    def add_n_hidden_layers(self):
+        print('n')
+        for i in range(self.num_layers):
+            self.add_hidden_layer(ann.hidden_size)
+        self.add_output_layer()
     
     def forward_prop(self, X):
         x = X.flatten()
@@ -80,13 +72,13 @@ class ann:
         self.h = []
         self.a = []
         h = self.x
-        for i in range(self.n_hidden_layers):
+        for i in range(ann.num_layers):
             a = self.Ws[i] @ h + self.bs[i]
-            h = self.activation_function(a)
+            h = ann.activation(a)
             self.a.append(a.reshape(len(a), 1))
             self.h.append(h.reshape(len(h), 1))
-        al = self.Ws[self.n_hidden_layers] @ h + self.bs[self.n_hidden_layers]
-        y = self.output_activation_function(al)
+        al = self.Ws[ann.num_layers] @ h + self.bs[ann.num_layers]
+        y = ann.output_activation(al)
         self.al = al
         self.y = y
         return y
@@ -94,19 +86,19 @@ class ann:
     def back_prop(self, y_actual):
         self.grad_Ws = []
         self.grad_bs = []
-        if(self.loss == 'cross_entropy'):
+        if(ann.loss == 'cross_entropy'):
             l = y_actual
             I_l = np.zeros(len(self.y)).reshape(len(self.y), 1)
             I_l[l][0] = 1
             grad_a = I_l - self.y
             grad_a = grad_a.reshape(len(grad_a), 1)
         
-        L = self.n_hidden_layers # Total number of layers - 1, indexing starts from 0.
+        L = ann.num_layers # Total number of layers - 1, indexing starts from 0.
         for k in range(L, 0, -1):
             grad_W = grad_a @ self.h[k-1].T
             grad_b = grad_a
             grad_h = self.Ws[k].T @ grad_a
-            grad_a = grad_h * self.d_activation_function(self.a[k-1])
+            grad_a = grad_h * ann.d_activation(self.a[k-1])
             self.grad_Ws.append(grad_W)
             self.grad_bs.append(grad_b)
         
