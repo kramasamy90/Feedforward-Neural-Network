@@ -21,13 +21,13 @@ def d_softmax(x, l): # Derivative of softmax
     return (_1 * y[l] - y[l] * y)
 
 
-def logistic(x):
+def sigmoid(x):
     x[x < -100] = -100
     return 1/(1+np.exp(-1 * x))
     pass
 
-def d_logistic(x): # derivative of sigmoid
-    y = logistic(x)
+def d_sigmoid(x): # derivative of sigmoid
+    y = sigmoid(x)
     return y * (1 - y)
 
 def tanh(x):
