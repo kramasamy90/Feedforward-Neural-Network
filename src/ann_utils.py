@@ -91,8 +91,8 @@ def get_norms_grads(nn):
 
 #%% Plots
 
-def view_weights_distribution(nn, num_layers):
+def view_weights_distribution(nn, num_layers, minval = -3, maxval = 3):
     fig, ax = plt.subplots(2, num_layers + 1)
     for i in range(num_layers + 1):
-        ax[0][i].hist(nn.Ws[i].flatten(), range=(-3, 3))
-        ax[1][i].hist(nn.bs[i].flatten(), range=(-3, 3))
+        ax[0][i].hist(nn.Ws[i].flatten(), range=(minval, maxval))
+        ax[1][i].hist(nn.bs[i].flatten(), range=(minval, maxval))
