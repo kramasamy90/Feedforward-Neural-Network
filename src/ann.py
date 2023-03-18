@@ -17,16 +17,30 @@ class ann:
 
         self.input_layer_width = input_layer_width
 
-        # Intialize
-        self.top_layer_width = input_layer_width # Top layer need not be the output layer. 
+        # Input parameters.
+        self.batch_size = 4
+        self.learning_rate = 0.1
+        self.momentum = 0.5
+        self.beta = 0.5
+        self.beta1 = 0.5
+        self.beta2 = 0.5
+        self.epsilon = 0.000001
+        self.weight_decay = 0.0
+        self.weight_init = ann_utils.random_init
         self.n_hidden_layers = 0
+        self.hidden_size = 4
+        self.activation_function = ann_utils.logistic
+        self.d_activation_function = ann_utils.d_logistic
+        self.init = ann_utils.random_init
+        # self.init = ann_utils.zero_init
+
+        # Other instance values.
+        self.top_layer_width = input_layer_width # Top layer need not be the output layer. 
         self.contains_output_layer = False # Used later to ensure hidden layers are not added on top of output layer.
         self.Ws = []
         self.bs = []
 
         # Set default loss and activation functions
-        self.activation_function = ann_utils.logistic
-        self.d_activation_function = ann_utils.d_logistic
         self.output_activation_function = ann_utils.softmax
         self.loss = 'cross_entropy'
 
@@ -35,10 +49,10 @@ class ann:
             print("ERROR: Cannot add hidden layer on top of output layer!")
             return
 
-        W = np.zeros(self.top_layer_width * width).reshape(width, self.top_layer_width)
+        W = self.init(width, self.top_layer_width)
         self.Ws.append(W)
 
-        b = np.zeros(width).reshape(width, 1)
+        b = self.init(width, 1)
         self.bs.append(b)
 
         self.n_hidden_layers += 1
@@ -105,13 +119,3 @@ class ann:
     
     def predict(self, X):
         return np.argmax(self.forward_prop(X))
-
-
-if (__name__ == '__main__'):
-    nn = ann(3)
-    nn.add_n_hidden_layers(3, 2)
-    nn.add_output_layer(2)
-    x = np.array([1, 2, 3])
-    y = np.array([0, 1])
-    nn.forward_prop(x)
-    nn.back_prop(y)
