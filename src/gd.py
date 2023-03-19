@@ -81,3 +81,31 @@ def rmsprop(nn, X_train, y_train, epochs):
         wv = [ann.beta * wv[j] + (1 - ann.beta) * grad_Ws[j] ** 2 for j in range(len(grad_Ws))]
         bv = [ann.beta * bv[j] + (1 - ann.beta) * grad_bs[j] ** 2 for j in range(len(grad_bs))]
 
+def adam(nn, X_train, y_train, epochs):
+    wm = []
+    bm = []
+    wv = []
+    bv = []
+    grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
+    wm = [(1 - ann.beta1) * grad_Ws[i] for i in range(len(grad_Ws))]
+    bm = [(1 - ann.beta1) * grad_bs[i] for i in range(len(grad_bs))]
+    wv = [(1 - ann.beta2) * grad_Ws[i] ** 2 for i in range(len(grad_Ws))]
+    bv = [(1 - ann.beta2) * grad_bs[i] ** 2 for i in range(len(grad_bs))]
+    wm_hat = wm
+    bm_hat = bm
+    wv_hat = wv
+    bv_hat = bv
+    for i in range(epochs):
+        for j in range(len(nn.Ws)):
+            nn.Ws[j] -= (ann.learning_rate / (np.sqrt(wv_hat[j]) + ann.epsilon)) * wm_hat[j]
+            nn.bs[j] -= (ann.learning_rate / (np.sqrt(bv_hat[j]) + ann.epsilon)) * bm_hat[j]
+        grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
+        wm = [ann.beta1 * wm[j] + (1 - ann.beta1) * grad_Ws[j] for j in range(len(grad_Ws))]
+        bm = [ann.beta1 * bm[j] + (1 - ann.beta1) * grad_bs[j] for j in range(len(grad_bs))]
+        wv = [ann.beta2 * wv[j] + (1 - ann.beta2) * grad_Ws[j] ** 2 for j in range(len(grad_Ws))]
+        bv = [ann.beta2 * bv[j] + (1 - ann.beta2) * grad_bs[j] ** 2 for j in range(len(grad_bs))]
+        wm_hat = [wm[j] / (1 - nn.beta1 ** (i + 1)) for j in range(len(wm))]
+        bm_hat = [bm[j] / (1 - nn.beta1 ** (i + 1)) for j in range(len(bm))]
+        wv_hat = [wv[j] / (1 - nn.beta2 ** (i + 1)) for j in range(len(wv))]
+        bv_hat = [bv[j] / (1 - nn.beta2 ** (i + 1)) for j in range(len(bv))]
+
