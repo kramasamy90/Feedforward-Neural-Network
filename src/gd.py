@@ -20,17 +20,18 @@ def compute_gradient(nn, X_train, y_train):
         nn.back_prop(y_train_batch[i])
         for i in range(ann.num_layers + 1):
             grad_Ws[i] += nn.grad_Ws[i]
+            grad_Ws[i] += ann.learning_rate * ann.weight_decay * nn.Ws[i]
             grad_bs[i] += nn.grad_bs[i]
+            grad_bs[i] += ann.learning_rate * ann.weight_decay * nn.bs[i]
     return grad_Ws, grad_bs
 
-def batch_gd(nn, X_train, y_train):
-    grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
-    for i in range(ann.num_layers + 1):
-        nn.Ws[i] -= ann.learning_rate * ann.weight_decay * nn.Ws[i]
-        nn.Ws[i] -= ann.learning_rate * grad_Ws[i] / nn.batch_size
-        nn.bs[i] -= ann.learning_rate * ann.weight_decay * nn.bs[i]
-        nn.bs[i] -= ann.learning_rate * grad_bs[i] / nn.batch_size
+def batch_gd(nn, X_train, y_train, epochs):
+    for i in range(epochs):
+        grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
+        for i in range(ann.num_layers + 1):
+            nn.Ws[i] -= ann.learning_rate * grad_Ws[i] / nn.batch_size
+            nn.bs[i] -= ann.learning_rate * grad_bs[i] / nn.batch_size
 
-def sgd(nn, X_train, y_train):
+def sgd(nn, X_train, y_train, epochs):
     nn.batch_size = 1
-    batch_gd(nn, X_train, y_train)
+    batch_gd(nn, X_train, y_train, epochs)
