@@ -18,11 +18,11 @@ def compute_gradient(nn, X_train, y_train):
     for i in range(nn.batch_size):
         nn.forward_prop(X_train_batch[i].flatten())
         nn.back_prop(y_train_batch[i])
-        for i in range(ann.num_layers + 1):
-            grad_Ws[i] += nn.grad_Ws[i]
-            grad_Ws[i] += ann.learning_rate * ann.weight_decay * nn.Ws[i]
-            grad_bs[i] += nn.grad_bs[i]
-            grad_bs[i] += ann.learning_rate * ann.weight_decay * nn.bs[i]
+        for j in range(ann.num_layers + 1):
+            grad_Ws[j] += nn.grad_Ws[j]
+            grad_Ws[j] += ann.learning_rate * ann.weight_decay * nn.Ws[j]
+            grad_bs[j] += nn.grad_bs[j]
+            grad_bs[j] += ann.learning_rate * ann.weight_decay * nn.bs[j]
     return grad_Ws, grad_bs
 
 def batch_gd(nn, X_train, y_train, epochs):
@@ -35,3 +35,6 @@ def batch_gd(nn, X_train, y_train, epochs):
 def sgd(nn, X_train, y_train, epochs):
     nn.batch_size = 1
     batch_gd(nn, X_train, y_train, epochs)
+
+       
+
