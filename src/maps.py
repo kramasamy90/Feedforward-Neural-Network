@@ -1,3 +1,6 @@
+import ann_utils
+import gd
+
 arg_short_to_long = {
     'wp': 'wandb_project', # str
     'we': 'wandb_entity', # str
@@ -17,4 +20,48 @@ arg_short_to_long = {
     'nhl': 'num_layers', # int
     'sz': 'hidden_size', # int
     'a': 'activation' # identity,sigmoid, tanh, ReLU
+}
+
+default_args = {
+    'wandb_project': 'myprojectname',
+    'wandb_entity': 'myname',
+    'dataset': 'fashion_mnist',
+    'epochs': '1',
+    'batch_size': '4',
+    'loss': 'cross_entropy',
+    'optimizer': 'sgd',
+    'learning_rate': '0.1',
+    'momentum': '0.5',
+    'beta': '0.5',
+    'beta1': '0.5',
+    'beta2': '0.5',
+    'epsilon': '0.000001',
+    'weight_decay': '0.0',
+    'weight_init': 'random',
+    'num_layers': '1',
+    'hidden_size': '4',
+    'activation': 'sigmoid'
+}
+
+activation_map = {
+    'identity': ann_utils.identity,
+    'sigmoid': ann_utils.sigmoid,
+    'tanh': ann_utils.tanh,
+    'ReLU': ann_utils.relu
+}
+
+d_activation_map = {
+    'identity': ann_utils.d_identity,
+    'sigmoid': ann_utils.d_sigmoid,
+    'tanh': ann_utils.d_tanh,
+    'ReLU': ann_utils.d_relu
+}
+
+weight_init_map = {
+    'random': ann_utils.random_init,
+    'Xavier': ann_utils.xavier_init
+}
+
+optimizer_map = {
+    'sgd': gd.sgd
 }
