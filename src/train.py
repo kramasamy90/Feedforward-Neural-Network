@@ -7,7 +7,6 @@ import maps
 args = maps.default_args
 
 # Read and store argument in a map/dict.
-
 for i in range(1, int((len(sys.argv) - 1)/2) + 1):
     arg = sys.argv[2 * i - 1]
     val = sys.argv[2 * i]
@@ -17,23 +16,6 @@ for i in range(1, int((len(sys.argv) - 1)/2) + 1):
     else:
         arg = maps.arg_short_to_long[arg[1:]]
     args[arg] = val
-
-epochs = int(args['epochs'])
-optimizer = maps.optimizer[args['optimizer']]
-
-ann.batch_size = int(args['batch_size'])
-ann.learning_rate = float(args['learning_rate'])
-ann.momentum = float(args['momentum'])
-ann.beta = float(args['beta'])
-ann.beta1 = float(args['beta1'])
-ann.beta2 = float(args['beta2'])
-ann.epsilon = float(args['epsilon'])
-ann.weight_decay = float(args['weight_decay'])
-ann.hidden_size = int(args['hidden_size'])
-
-ann.weight_init = maps.weight_init[args['weight_init']]
-ann.activation = maps.activation[args['activation']]
-ann.d_activation = maps.d_activation[args['activation']]
 
 if args['dataset'] == 'fashion_mnist':
     from keras.datasets import fashion_mnist
@@ -61,9 +43,63 @@ y_valid = y_train[ind[1: m]]
 X_train = X_train[ind[m:]]
 y_train = y_train[ind[m:]]
 
-nn = ann(input_dim, output_dim)
+if (args['wandb_project'] != 'NA'):
+    epochs = int(args['epochs'])
+    optimizer = maps.optimizer[args['optimizer']]
 
-optimizer(nn, X_train, y_train, epochs)
+    ann.batch_size = int(args['batch_size'])
+    ann.learning_rate = float(args['learning_rate'])
+    ann.momentum = float(args['momentum'])
+    ann.beta = float(args['beta'])
+    ann.beta1 = float(args['beta1'])
+    ann.beta2 = float(args['beta2'])
+    ann.epsilon = float(args['epsilon'])
+    ann.weight_decay = float(args['weight_decay'])
+    ann.hidden_size = int(args['hidden_size'])
 
-print(train_utils.get_loss(nn, X_valid, y_valid))
-print(train_utils.get_classification_accuracy(nn, X_valid, y_valid))
+    ann.weight_init = maps.weight_init[args['weight_init']]
+    ann.activation = maps.activation[args['activation']]
+    ann.d_activation = maps.d_activation[args['activation']]
+
+
+
+if (args['wandb_project'] != 'NA'):
+    nn = ann(input_dim, output_dim)
+    optimizer(nn, X_train, y_train, epochs)
+    print(train_utils.get_loss(nn, X_valid, y_valid))
+    print(train_utils.get_classification_accuracy(nn, X_valid, y_valid))
+
+## Run sweeps.
+
+def train(config):
+    # Hyperparameters:
+    epochs = config.epochs
+    ann.weight_decay = config.weight_decay
+    ann.learning_rate = config.learning_rate
+
+    # ANN architecture
+    ann.num_layers = config.num_layers
+    ann.hidden_size = config.hidden_size
+    ann.batch_size = config.batch_size
+    ann.weight_init = maps.weight_init[config.weight_init]
+    ann.activation = maps.activation[config.activation]
+    ann.d_activation = maps.d_activation[config.activation]
+
+    # Functions
+    optimizer = maps.optimizer[config.optimizer]
+
+    nn = ann(input_dim, output_dim)
+
+    optimizer(nn, X_train, y_train, epochs)
+
+    performance = []
+    performance.append(train_utils.get_classification_accuracy(nn, X_test, y_test))
+    performance.append(train_utils.get_classification_accuracy(nn, X_valid, y_valid))
+    performance.append(train_utils.get_loss(nn, X_test, y_test))
+    performance.append(train_utils.get_loss(nn, X_valid, y_valid))
+
+    return performance
+
+if(args['wandb_project'] != 'NA'):
+    import wandb
+    wandb.login()
