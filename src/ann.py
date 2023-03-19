@@ -31,7 +31,7 @@ class ann:
     d_output_activation = ann_utils.d_softmax
 
     # ANN structure
-    num_layers = 5
+    num_layers = 1
     hidden_size = 4
 
     def __init__(self, input_layer_width, output_layer_width):
