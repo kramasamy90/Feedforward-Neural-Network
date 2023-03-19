@@ -63,5 +63,10 @@ weight_init= {
 }
 
 optimizer = {
-    'sgd': gd.sgd
+    'sgd': gd.sgd,
+    'momentum': gd.momentum,
+    'nag': gd.nesterov,
+    'rmsprop': gd.rmsprop,
+    'adam': gd.adam,
+    'nadam': gd.adam
 }
