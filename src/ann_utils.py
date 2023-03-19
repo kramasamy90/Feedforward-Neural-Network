@@ -30,7 +30,7 @@ def d_softmax(x, l): # Derivative of softmax
 
 
 def sigmoid(x):
-    x[x < -100] = -100
+    x = np.clip(x, -100, 100)
     return 1/(1+np.exp(-1 * x))
 
 def d_sigmoid(x): # derivative of sigmoid
