@@ -43,25 +43,25 @@ default_args = {
     'activation': 'sigmoid'
 }
 
-activation_map = {
+activation= {
     'identity': ann_utils.identity,
     'sigmoid': ann_utils.sigmoid,
     'tanh': ann_utils.tanh,
     'ReLU': ann_utils.relu
 }
 
-d_activation_map = {
+d_activation= {
     'identity': ann_utils.d_identity,
     'sigmoid': ann_utils.d_sigmoid,
     'tanh': ann_utils.d_tanh,
     'ReLU': ann_utils.d_relu
 }
 
-weight_init_map = {
+weight_init= {
     'random': ann_utils.random_init,
     'Xavier': ann_utils.xavier_init
 }
 
-optimizer_map = {
+optimizer = {
     'sgd': gd.sgd
 }
