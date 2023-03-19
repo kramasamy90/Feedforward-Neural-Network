@@ -61,7 +61,7 @@ def random_init(n_rows, n_cols, scale = 0.01):
     return scale * np.random.randn(n_rows, n_cols)
 
 def xavier_init(n_rows, n_cols, scale = 1):
-    return scale * np.random.randn(n_rows, n_cols) / np.sqrt(n_cols)
+    return scale * np.random.randn(n_rows, n_cols) * np.sqrt(n_cols, * n_rows)
 
 #%%
 # Functions to troubleshoot 
