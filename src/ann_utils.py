@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 #%%
 # Activation functions and their derivatives.
 
+def identity(x):
+    return x
+
+def d_identity(x):
+    return 1
+
 def softmax(x): # x is a numpy array.
     max_val = np.max(x)
     x_exp = np.exp(x - max_val)
