@@ -36,5 +36,17 @@ def sgd(nn, X_train, y_train, epochs):
     nn.batch_size = 1
     batch_gd(nn, X_train, y_train, epochs)
 
-       
-
+def momentum(nn, X_train, y_train, epochs):
+    wu = []
+    bu = []
+    grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
+    wu = grad_Ws
+    bu = grad_bs
+    for i in range(epochs):
+        for j in range(len(nn.Ws)):
+            nn.Ws[j] -= ann.learning_rate * wu[j]
+            nn.bs[j] -= ann.learning_rate * bu[j]
+        grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
+        for j in range(len(wu)):
+            wu[j] = nn.beta * wu[j] + grad_Ws[j]
+            bu[j] = nn.beta * bu[j] + grad_bs[j]
