@@ -44,24 +44,11 @@ def d_tanh(x): # derivative of tanh
     y = np.tanh(x)
     return 1 - y ** 2
 
-def basic_relu(x): 
-    return max(x, 0.0)
-
-v_relu = np.vectorize(basic_relu)
-
 def relu(x):
-    return v_relu(x)
-
-def basic_d_relu(x):
-    if x <= 0: 
-        return 0
-    else:
-        return 1
-
-v_d_relu = np.vectorize(basic_d_relu)
+    return np.maximum(0, x)
 
 def d_relu(x): # derivative of relu
-    return v_d_relu(x)
+    return np.where(x > 0, 1, 0)
 
 #%%
 # Weight initialization.
