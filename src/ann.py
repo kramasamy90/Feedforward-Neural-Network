@@ -83,7 +83,6 @@ class ann:
     def back_prop(self, y_actual):
         self.grad_Ws = []
         self.grad_bs = []
-        print(y_actual)
         if(ann.loss == 'cross_entropy'):
             l = y_actual
             I_l = np.zeros(self.y.shape)
