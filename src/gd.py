@@ -75,8 +75,9 @@ def rmsprop(nn, X_train, y_train, epochs):
     bv = [(1 - ann.beta) * grad_bs[i] ** 2 for i in range(len(grad_bs))]
     for i in range(epochs):
         for j in range(len(nn.Ws)):
-            nn.Ws[j] -= ann.learning_rate * np.sqrt(wv[j] + ann.epsilon) * grad_Ws[j]
-            nn.bs[j] -= ann.learning_rate * np.sqrt(bv[j] + ann.epsilon) * grad_bs[j]
+            nn.Ws[j] -= (ann.learning_rate / (np.sqrt(wv[j]) + ann.epsilon)) * grad_Ws[j]
+            nn.bs[j] -= (ann.learning_rate / (np.sqrt(bv[j]) + ann.epsilon)) * grad_bs[j]
         grad_Ws, grad_bs = compute_gradient(nn, X_train, y_train)    
         wv = [ann.beta * wv[j] + (1 - ann.beta) * grad_Ws[j] ** 2 for j in range(len(grad_Ws))]
         bv = [ann.beta * bv[j] + (1 - ann.beta) * grad_bs[j] ** 2 for j in range(len(grad_bs))]
+
