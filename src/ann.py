@@ -20,7 +20,6 @@ class ann:
     beta1 = 0.5
     beta2 = 0.5
     weight_decay = 0.0
-    epsilon = 0.000001
     loss = 'cross_entropy'
 
     # Functions
@@ -83,18 +82,12 @@ class ann:
     def back_prop(self, y_actual):
         self.grad_Ws = []
         self.grad_bs = []
-        print(y_actual)
         if(ann.loss == 'cross_entropy'):
             l = y_actual
-            I_l = np.zeros(self.y.shape)
+            I_l = np.zeros(len(self.y)).reshape(len(self.y), 1)
             I_l[l][0] = 1
-            grad_a = self.y - I_l
+            grad_a = I_l - self.y
             grad_a = grad_a.reshape(len(grad_a), 1)
-        
-        if(ann.loss == 'mean_squared_error'):
-            grad_y =  self.y - y_actual
-            dy_da = ann.d_output_activation(self.al)
-            grad_a = grad_y * dy_da
         
         L = ann.num_layers # Total number of layers - 1, indexing starts from 0.
         for k in range(L, 0, -1):
