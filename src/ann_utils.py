@@ -23,9 +23,9 @@ def d_softmax(x, l): # Derivative of softmax
     l: l is the category to which the input feature belongs to. This is the same notation used in lecture.
     '''
 
-    _1 = np.zeros(x.shape[0])
-    _1[l] = 1
     y = softmax(x)
+    _1 = np.zeros(y.shape)
+    _1[l] = 1
     return (_1 * y[l] - y[l] * y)
 
 
