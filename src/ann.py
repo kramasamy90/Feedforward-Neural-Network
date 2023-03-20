@@ -83,8 +83,8 @@ class ann:
     def back_prop(self, y_actual):
         self.grad_Ws = []
         self.grad_bs = []
+        l = y_actual
         if(ann.loss == 'cross_entropy'):
-            l = y_actual
             I_l = np.zeros(self.y.shape)
             I_l[l][0] = 1
             grad_a = self.y - I_l
@@ -92,7 +92,7 @@ class ann:
         
         if(ann.loss == 'mean_squared_error'):
             grad_y =  self.y - y_actual
-            dy_da = ann.d_output_activation(self.al)
+            dy_da = ann.d_output_activation(self.al, l)
             grad_a = grad_y * dy_da
         
         L = ann.num_layers # Total number of layers - 1, indexing starts from 0.
