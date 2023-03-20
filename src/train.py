@@ -43,50 +43,30 @@ y_valid = y_train[ind[1: m]]
 X_train = X_train[ind[m:]]
 y_train = y_train[ind[m:]]
 
-if (args['wandb_project'] != 'NA'):
-    epochs = int(args['epochs'])
-    optimizer = maps.optimizer[args['optimizer']]
+import wandb
+wandb.login()
+project_name = args['wandb_project']
+entity = args['wandb_entity']
 
-    ann.batch_size = int(args['batch_size'])
-    ann.learning_rate = float(args['learning_rate'])
-    ann.momentum = float(args['momentum'])
-    ann.beta = float(args['beta'])
-    ann.beta1 = float(args['beta1'])
-    ann.beta2 = float(args['beta2'])
-    ann.epsilon = float(args['epsilon'])
-    ann.weight_decay = float(args['weight_decay'])
-    ann.hidden_size = int(args['hidden_size'])
+epochs = int(args['epochs'])
+optimizer = maps.optimizer[args['optimizer']]
 
-    ann.weight_init = maps.weight_init[args['weight_init']]
-    ann.activation = maps.activation[args['activation']]
-    ann.d_activation = maps.d_activation[args['activation']]
+ann.batch_size = int(args['batch_size'])
+ann.learning_rate = float(args['learning_rate'])
+ann.momentum = float(args['momentum'])
+ann.beta = float(args['beta'])
+ann.beta1 = float(args['beta1'])
+ann.beta2 = float(args['beta2'])
+ann.epsilon = float(args['epsilon'])
+ann.weight_decay = float(args['weight_decay'])
+ann.hidden_size = int(args['hidden_size'])
 
-
-
-if (args['wandb_project'] != 'NA'):
-    nn = ann(input_dim, output_dim)
-    optimizer(nn, X_train, y_train, epochs)
-    print(train_utils.get_loss(nn, X_valid, y_valid))
-    print(train_utils.get_classification_accuracy(nn, X_valid, y_valid))
-
-## Run sweeps.
+ann.weight_init = maps.weight_init[args['weight_init']]
+ann.activation = maps.activation[args['activation']]
+ann.d_activation = maps.d_activation[args['activation']]
+ann.loss = args['loss']
 
 def train(config):
-    # Hyperparameters:
-    epochs = config.epochs
-    ann.weight_decay = config.weight_decay
-    ann.learning_rate = config.learning_rate
-
-    # ANN architecture
-    ann.num_layers = config.num_layers
-    ann.hidden_size = config.hidden_size
-    ann.batch_size = config.batch_size
-    ann.weight_init = maps.weight_init[config.weight_init]
-    ann.activation = maps.activation[config.activation]
-    ann.d_activation = maps.d_activation[config.activation]
-
-    # Functions
-    optimizer = maps.optimizer[config.optimizer]
 
     nn = ann(input_dim, output_dim)
 
@@ -100,6 +80,21 @@ def train(config):
 
     return performance
 
-if(args['wandb_project'] != 'NA'):
-    import wandb
-    wandb.login()
+def main():
+    wandb.init(project = project_name, entity= entity)
+    performance = train(wandb.config)
+    wandb.log({'acc': performance[0], 'val_acc': performance[1], 'loss': performance[2], 'val_loss': performance[3]})
+
+sweep_configuration = {
+    'method': 'bayes',
+    'metric': {
+        'goal': 'minimize',
+        'name': 'val_loss'
+    },
+    'parameters': {
+        'placeholder': {'values': [0]},
+    }
+}
+
+sweep_id = wandb.sweep(sweep = sweep_configuration, project = project_name)
+wandb.agent(sweep_id, function = main, count = 1)
