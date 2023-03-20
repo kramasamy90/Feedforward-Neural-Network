@@ -15,9 +15,9 @@ This repo is my implementation of a deep neural network from first principles as
 
 ### Training
 
-*train.py*: Used to train the ANN. Takes parameters as specified by the problem statement.
+*train.py*: Used to train the ANN. Takes parameters as specified by the problem statement. Creates one run in the `projectname`.
 
-*train_utils.py*: Contains function to get accuracy.
+*train_utils.py*: Contains function to get accuracy and loss.
 
 *maps.py*: Contains mapping from parameter to functions and variables. It is used by *train.py*.
 
