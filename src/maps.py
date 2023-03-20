@@ -23,8 +23,8 @@ arg_short_to_long = {
 }
 
 default_args = {
-    'wandb_project': 'NA',
-    'wandb_entity': 'NA',
+    'wandb_project': 'myprojectname',
+    'wandb_entity': 'myname',
     'dataset': 'fashion_mnist',
     'epochs': '1',
     'batch_size': '4',
