@@ -1,4 +1,4 @@
-# CS6910-Assignment-1
+# Implementation of Feedforward Neural Network from scratch.
 #### February 28, 2023
 
 This repo is my implementation of a deep neural network from first principles as part of Assignment-01 of CS6910.
